@@ -26,25 +26,25 @@ def getProductos():
     productos = Productos.getProductos()
     return productos
 
-@app.get("/productos/{id}")
-def getProducto(id: int):
-    # producto = Productos.getProducto(id)
-    return {"id": id, "nombre": "Producto 1", "precio": 100.0}
+# @app.get("/productos/{id}")
+# def getProducto(id: int):
+#     # producto = Productos.getProducto(id)
+#     return {"id": id, "nombre": "Producto 1", "precio": 100.0}
 
-@app.post("/productos")
-def addProducto(producto: dict):
-    # producto = Productos.addProducto(producto)
-    return producto
+# @app.post("/productos")
+# def addProducto(producto: dict):
+#     # producto = Productos.addProducto(producto)
+#     return producto
 
-@app.put("/productos/{id}")
-def updateProducto(id: int, producto: dict):
-    # producto = Productos.updateProducto(id, producto)
-    return producto
+# @app.put("/productos/{id}")
+# def updateProducto(id: int, producto: dict):
+#     # producto = Productos.updateProducto(id, producto)
+#     return producto
 
-@app.delete("/productos/{id}")
-def deleteProducto(id: int):
-    # producto = Productos.deleteProducto(id)
-    return {"message": "Producto eliminado"}
+# @app.delete("/productos/{id}")
+# def deleteProducto(id: int):
+#     # producto = Productos.deleteProducto(id)
+#     return {"message": "Producto eliminado"}
 
 @app.post("/venta")
 async def addVenta(request: Request):
