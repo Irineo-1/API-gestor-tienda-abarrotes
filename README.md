@@ -1,4 +1,4 @@
-# Gestor de tienda
+# API Gestor de tienda
 Este proyecto es la parte del Back-end el Front-end se encuentra en: [Gestor-tienda-abarrotes](https://github.com/Irineo-1/Gestor-tienda-abarrotes).
 El principal proposito de este proyecto es practicar mis habilidades con Python y Fastapi, creando un servicio que expone los endpoints necesarios para que la aplicación [Gestor-tienda-abarrotes](https://github.com/Irineo-1/Gestor-tienda-abarrotes) funcione.
 
