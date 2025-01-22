@@ -32,7 +32,7 @@ def getProductos():
 #     return {"id": id, "nombre": "Producto 1", "precio": 100.0}
 
 # @app.post("/productos")
-# def addProducto(producto: dict):
+# def addProducto(request: Request):
 #     # producto = Productos.addProducto(producto)
 #     return producto
 
@@ -46,8 +46,12 @@ def getProductos():
 #     # producto = Productos.deleteProducto(id)
 #     return {"message": "Producto eliminado"}
 
+@app.get("/venta/{date}")
+def getVentas(date: str):
+    res = Ventas.getVentas(date)
+    return res
+
 @app.post("/venta")
-async def addVenta(request: Request):
-    venta: IVenta = await request.json()
-    Ventas.addVenta(venta)
+async def addVenta(request: IVenta):
+    Ventas.addVenta(request)
     return {"response": "OK"}

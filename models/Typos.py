@@ -2,10 +2,12 @@ from .conexion import getConexion
 
 class Typos:
 
+	__Tabla_tipos: str = "typo_productos"
+
 	def getTiposProductos():
 		cnn = getConexion()
 		cursor = cnn.cursor(dictionary=True)
-		cursor.execute("SELECT * FROM typo_productos")
+		cursor.execute(f"SELECT * FROM {Typos.__Tabla_tipos}")
 		res = cursor.fetchall()
 		cursor.close()
 		return res
@@ -13,7 +15,7 @@ class Typos:
 	def getTiposUsuarios():
 		cnn = getConexion()
 		cursor = cnn.cursor(dictionary=True)
-		cursor.execute("SELECT * FROM typo_usuarios")
+		cursor.execute(f"SELECT * FROM {Typos.__Tabla_tipos}")
 		res = cursor.fetchall()
 		cursor.close()
 		return res
