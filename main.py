@@ -4,6 +4,7 @@ from models.Productos import Productos
 from models.Ventas import Ventas
 from fastapi.middleware.cors import CORSMiddleware
 from baseModels.IVenta import IVenta
+from baseModels.IProducto import IProducto
 from fastapi import Request
 
 app = FastAPI()
@@ -26,25 +27,20 @@ def getProductos():
     productos = Productos.getProductos()
     return productos
 
-# @app.get("/productos/{id}")
-# def getProducto(id: int):
-#     # producto = Productos.getProducto(id)
-#     return {"id": id, "nombre": "Producto 1", "precio": 100.0}
+@app.post("/productos")
+def addProducto(producto: IProducto):
+    id = Productos.addProducto(producto)
+    return {"id": id}
 
-# @app.post("/productos")
-# def addProducto(request: Request):
-#     # producto = Productos.addProducto(producto)
-#     return producto
+@app.put("/productos")
+def updateProducto(producto: IProducto):
+    Productos.updateProducto(producto)
+    return {"response": "ok"}
 
-# @app.put("/productos/{id}")
-# def updateProducto(id: int, producto: dict):
-#     # producto = Productos.updateProducto(id, producto)
-#     return producto
-
-# @app.delete("/productos/{id}")
-# def deleteProducto(id: int):
-#     # producto = Productos.deleteProducto(id)
-#     return {"message": "Producto eliminado"}
+@app.delete("/productos/{id}")
+def deleteProducto(id: int):
+    Productos.deleteProducto(id)
+    return {"message": "Producto eliminado"}
 
 @app.get("/venta/{date}")
 def getVentas(date: str):
