@@ -1,11 +1,8 @@
-from typing import Union
 from fastapi import FastAPI
-from models.Productos import Productos
-from models.Ventas import Ventas
 from fastapi.middleware.cors import CORSMiddleware
-from baseModels.IVenta import IVenta
-from baseModels.IProducto import IProducto
-from fastapi import Request
+from rutas.productos import router as productos_router
+from rutas.ventas import router as ventas_router
+from rutas.usuarios import router as usuarios_router
 
 app = FastAPI()
 
@@ -22,32 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/productos")
-def getProductos():
-    productos = Productos.getProductos()
-    return productos
-
-@app.post("/productos")
-def addProducto(producto: IProducto):
-    id = Productos.addProducto(producto)
-    return {"id": id}
-
-@app.put("/productos")
-def updateProducto(producto: IProducto):
-    Productos.updateProducto(producto)
-    return {"response": "ok"}
-
-@app.delete("/productos/{id}")
-def deleteProducto(id: int):
-    Productos.deleteProducto(id)
-    return {"message": "Producto eliminado"}
-
-@app.get("/venta/{date}")
-def getVentas(date: str):
-    res = Ventas.getVentas(date)
-    return res
-
-@app.post("/venta")
-async def addVenta(request: IVenta):
-    Ventas.addVenta(request)
-    return {"response": "OK"}
+app.include_router(productos_router)
+app.include_router(ventas_router)
+app.include_router(usuarios_router)
