@@ -5,5 +5,4 @@ from baseModels.IUsuario import IUsuario
 class Usuarios: 
 
 	def Autenticacion(request: IUsuario):
-		print("se autentico")
 		return generar_token(request.usuario)

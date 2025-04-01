@@ -9,14 +9,14 @@ class Ventas:
 	__Tabla_codigo_ventas: str = "codigo_ventas"
 	__Tabla_tipos: str = "typo_productos"
 
-	def __registrar_codigo_venta():
+	def __registrar_codigo_venta(total_pago: float):
 		cnn = getConexion()
 		cursor = cnn.cursor()
 
 		codigo_venta: str = str(uuid.uuid4())
 
-		sql: str = f"INSERT INTO {Ventas.__Tabla_codigo_ventas}(codigo_venta) values(%s)"
-		val: tuple = (codigo_venta,)
+		sql: str = f"INSERT INTO {Ventas.__Tabla_codigo_ventas}(codigo_venta, total_pagado) values(%s, %s)"
+		val: tuple = (codigo_venta, total_pago)
 
 		cursor.execute(sql, val)
 		cnn.commit()
@@ -29,14 +29,24 @@ class Ventas:
 		cnn = getConexion()
 		cursor = cnn.cursor()
 
-		id_codigo_venta = Ventas.__registrar_codigo_venta()
+		venta_dict = venta.dict()
+
+		id_codigo_venta = Ventas.__registrar_codigo_venta(venta_dict["pago"])
 
 		sql: str = f"INSERT INTO {Ventas.__Tabla_ventas}(codigo_venta, nombre, cantidad, typo, gramaje, precio_acumulado) values (%s,%s,%s,(SELECT id FROM {Ventas.__Tabla_tipos} WHERE typo = %s),%s,%s)"
 		val = []
 
-		for producto in venta['productos']:
-			val.append((id_codigo_venta, producto['nombre'], producto['cantidad'], producto['typo'], producto['gramos'], producto['cantidad'] * producto['precio']))
+		for producto in venta_dict["productos"]:
+			val.append((
+				id_codigo_venta, 
+				producto["nombre"], 
+				producto["cantidad"], 
+				producto["typo"], 
+				producto["gramos"], 
+				producto["cantidad"] * producto["precio"]
+			))
 
+		print(val)
 		cursor.executemany(sql, val)
 		cnn.commit()
 		cursor.close()
@@ -45,7 +55,7 @@ class Ventas:
 		cnn = getConexion()
 		cursor = cnn.cursor(dictionary=True)
 
-		sql: str = """SELECT cv.codigo_venta, cv.fecha,
+		sql: str = """SELECT cv.codigo_venta, cv.fecha, cv.total_pagado,
 		    CONCAT('[', 
 		        GROUP_CONCAT(
 		            CONCAT(
@@ -61,7 +71,7 @@ class Ventas:
 		        ), 
 		    ']') AS productos
 		FROM codigo_ventas cv
-		LEFT JOIN ventas vs on vs.codigo_venta = cv.id WHERE cv.fecha = %s
+		INNER JOIN ventas vs on vs.codigo_venta = cv.id WHERE cv.fecha = %s GROUP BY cv.id, cv.codigo_venta, cv.fecha, cv.total_pagado
 		"""
 
 		val = (date,)
