@@ -7,4 +7,4 @@ class IProducto(BaseModel):
 	precio: float
 	gramaje: float
 	cantidad_contable: int
-	typo: str
+	typo: int
