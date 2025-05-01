@@ -6,16 +6,18 @@ class Typos:
 
 	def getTiposProductos():
 		cnn = getConexion()
-		cursor = cnn.cursor(dictionary=True)
+		cursor = cnn.cursor()
 		cursor.execute(f"SELECT * FROM {Typos.__Tabla_tipos}")
 		res = cursor.fetchall()
 		cursor.close()
+		cnn.close()
 		return res
 
 	def getTiposUsuarios():
 		cnn = getConexion()
-		cursor = cnn.cursor(dictionary=True)
+		cursor = cnn.cursor()
 		cursor.execute(f"SELECT * FROM {Typos.__Tabla_tipos}")
 		res = cursor.fetchall()
 		cursor.close()
+		cnn.close()
 		return res

@@ -15,7 +15,7 @@ class Ventas:
 
 		codigo_venta: str = str(uuid.uuid4())
 
-		sql: str = f"INSERT INTO {Ventas.__Tabla_codigo_ventas}(codigo_venta, total_pagado) values(%s, %s)"
+		sql: str = f"INSERT INTO {Ventas.__Tabla_codigo_ventas}(codigo_venta, total_pagado) values(?, ?)"
 		val: tuple = (codigo_venta, total_pago)
 
 		cursor.execute(sql, val)
@@ -33,7 +33,7 @@ class Ventas:
 
 		id_codigo_venta = Ventas.__registrar_codigo_venta(venta_dict["pago"])
 
-		sql: str = f"INSERT INTO {Ventas.__Tabla_ventas}(codigo_venta, nombre, cantidad, typo, gramaje, precio_acumulado) values (%s,%s,%s,(SELECT id FROM {Ventas.__Tabla_tipos} WHERE typo = %s),%s,%s)"
+		sql: str = f"INSERT INTO {Ventas.__Tabla_ventas}(codigo_venta, nombre, cantidad, typo, gramaje, precio_acumulado) values (?,?,?,(SELECT id FROM {Ventas.__Tabla_tipos} WHERE typo = ?),?,?)"
 		val = []
 
 		for producto in venta_dict["productos"]:
@@ -46,32 +46,32 @@ class Ventas:
 				producto["cantidad"] * producto["precio"]
 			))
 
-		print(val)
+
 		cursor.executemany(sql, val)
 		cnn.commit()
 		cursor.close()
+		cnn.close()
 
 	def getVentas(date: str):
 		cnn = getConexion()
-		cursor = cnn.cursor(dictionary=True)
-
-		sql: str = """SELECT cv.codigo_venta, cv.fecha, cv.total_pagado,
-		    CONCAT('[', 
-		        GROUP_CONCAT(
-		            CONCAT(
-		                '{',
-		                '"nombre": "', vs.nombre, '", ',
-		                '"cantidad": ', vs.cantidad, ', ',
-		                '"typo": "', vs.typo, '", ',
-		                '"gramaje": "', vs.gramaje, '", ',
-		                '"precio_acumulado": ', vs.precio_acumulado,
-		                '}'
-		            )
-		        SEPARATOR ','
-		        ), 
-		    ']') AS productos
-		FROM codigo_ventas cv
-		INNER JOIN ventas vs on vs.codigo_venta = cv.id WHERE cv.fecha = %s GROUP BY cv.id, cv.codigo_venta, cv.fecha, cv.total_pagado
+		cursor = cnn.cursor()
+		sql: str = """SELECT 
+			  cv.codigo_venta,
+			  cv.fecha,
+			  cv.total_pagado,
+			  '[' || GROUP_CONCAT(
+			    '{' ||
+			    '"nombre": "' || vs.nombre || '", ' ||
+			    '"cantidad": ' || vs.cantidad || ', ' ||
+			    '"typo": "' || vs.typo || '", ' ||
+			    '"gramaje": "' || vs.gramaje || '", ' ||
+			    '"precio_acumulado": ' || vs.precio_acumulado ||
+			    '}'
+			  ) || ']' AS productos
+			FROM codigo_ventas cv
+			INNER JOIN ventas vs ON vs.codigo_venta = cv.id
+			WHERE cv.fecha = ?
+			GROUP BY cv.id, cv.codigo_venta, cv.fecha, cv.total_pagado
 		"""
 
 		val = (date,)
@@ -79,4 +79,5 @@ class Ventas:
 		cursor.execute(sql, val)
 		res = cursor.fetchall()
 		cursor.close()
+		cnn.close()
 		return res

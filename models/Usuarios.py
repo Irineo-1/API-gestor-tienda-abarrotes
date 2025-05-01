@@ -12,7 +12,7 @@ class Usuarios:
 
 	def GetUsuarios():
 		cnn = getConexion()
-		cursor = cnn.cursor(dictionary=True)
+		cursor = cnn.cursor()
 		sql: str = f"""
 			SELECT user.id, user.usuario, typouser.typo FROM {Usuarios.__Tabla_usuarios} user 
 			INNER JOIN {Usuarios.__Tabla_typo_usuarios} typouser 
@@ -21,4 +21,5 @@ class Usuarios:
 		cursor.execute(sql)
 		res = cursor.fetchall()
 		cursor.close()
+		cnn.close()
 		return res
