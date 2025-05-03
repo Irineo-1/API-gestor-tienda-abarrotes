@@ -1,13 +1,14 @@
 from .conexion import getConexion
 from rutas.token import generar_token
-from baseModels.IUsuario import IUsuario
+from baseModels.Usuario import Usuario
+from .cifrado.password_encrypt import hash_password
 
 class Usuarios: 
 
 	__Tabla_usuarios: str = "usuarios"
 	__Tabla_typo_usuarios: str = "typo_usuarios"
 
-	def Autenticacion(request: IUsuario):
+	def Autenticacion(request: Usuario):
 		return generar_token(request.usuario)
 
 	def GetUsuarios():
@@ -23,3 +24,18 @@ class Usuarios:
 		cursor.close()
 		cnn.close()
 		return res
+
+	def AddTrabajador(request: Usuario):
+		cnn = getConexion()
+		cursor = cnn.cursor()
+		sql: str = f"INSERT INTO {Usuarios.__Tabla_usuarios} (usuario, typo, password) VALUES(?,?,?)"
+
+		# tratamiento para la contraneña
+		encode_password = hash_password(request.password)
+
+		val = (request.usuario, request.typo, encode_password)
+
+		cursor.execute(sql, val)
+		cnn.commit()
+		cursor.close()
+		cnn.close()
