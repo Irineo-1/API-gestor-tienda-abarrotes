@@ -37,5 +37,34 @@ class Usuarios:
 
 		cursor.execute(sql, val)
 		cnn.commit()
+		id = cursor.lastrowid
+		cursor.close()
+		cnn.close()
+		return id
+
+	def UpdateTrabajador(request: Usuario):
+		cnn = getConexion()
+		cursor = cnn.cursor()
+
+		encode_password = hash_password(request.password)
+
+		sql: str = f"UPDATE {Usuarios.__Tabla_usuarios} SET usuario = ?, password = ? WHERE id = ?"
+
+		val = (request.usuario, encode_password, request.id)
+
+		cursor.execute(sql, val)
+		cnn.commit()
+		cursor.close()
+		cnn.close()
+
+	def DeleteTrabajador(id: int):
+		cnn = getConexion()
+		cursor = cnn.cursor()
+		sql: str = f"DELETE FROM {Usuarios.__Tabla_usuarios} WHERE id = ?"
+
+		val = (id,)
+
+		cursor.execute(sql, val)
+		cnn.commit()
 		cursor.close()
 		cnn.close()

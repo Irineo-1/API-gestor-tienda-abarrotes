@@ -23,5 +23,15 @@ def GetTiposUsuarios(usuario: dict = Depends(verificar_token)):
 
 @router.post("/")
 def addTrabajador(request: Usuario, usuario: dict = Depends(verificar_token)):
-	Usuarios.AddTrabajador(request)
-	return {"Status": 201}
+	id = Usuarios.AddTrabajador(request)
+	return {"id": id}
+
+@router.put("/")
+def updateTrabajador(request: Usuario, usuario: dict = Depends(verificar_token)):
+	id = Usuarios.UpdateTrabajador(request)
+	return {"status": "OK"}
+
+@router.delete("/{id}")
+def deleteTrabajador(id: int, usuario: dict = Depends(verificar_token)):
+	id = Usuarios.DeleteTrabajador(id)
+	return {"status": "OK"}
