@@ -5,8 +5,9 @@ El principal proposito de este proyecto es practicar mis habilidades con Python 
 ## Comandos para ejecutarlo
 ```bash
 pip install "fastapi[standard]"
+
 # Despues
-pip install mysql-connector-python
+pip install bcrypt
 
 # Se ejecuta en desarrollo con
 fastapi dev main.py
