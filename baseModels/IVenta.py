@@ -6,7 +6,7 @@ class Producto(BaseModel):
     precio: float
     cantidad: int
     gramos: int
-    typo: str
+    typo: int
 
 class IVenta(BaseModel):
     productos: List[Producto]

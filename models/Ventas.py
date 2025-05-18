@@ -33,7 +33,7 @@ class Ventas:
 
 		id_codigo_venta = Ventas.__registrar_codigo_venta(venta_dict["pago"])
 
-		sql: str = f"INSERT INTO {Ventas.__Tabla_ventas}(codigo_venta, nombre, cantidad, typo, gramaje, precio_acumulado) values (?,?,?,(SELECT id FROM {Ventas.__Tabla_tipos} WHERE typo = ?),?,?)"
+		sql: str = f"INSERT INTO {Ventas.__Tabla_ventas}(codigo_venta, nombre, cantidad, typo, gramaje, precio_acumulado) values (?,?,?,?,?,?)"
 		val = []
 
 		for producto in venta_dict["productos"]:
