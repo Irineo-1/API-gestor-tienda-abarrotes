@@ -29,6 +29,9 @@ class Ventas:
 		cnn = getConexion()
 		cursor = cnn.cursor()
 
+		# crear un objeto de tipo producto que se inicialice con la infor del producto
+		# dentro de este hacer las reglas para la venta
+
 		venta_dict = venta.dict()
 
 		id_codigo_venta = Ventas.__registrar_codigo_venta(venta_dict["pago"])
