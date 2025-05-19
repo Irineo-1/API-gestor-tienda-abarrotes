@@ -8,7 +8,7 @@ class Productos:
     def getProductos():
         cnn = getConexion()
         cursor = cnn.cursor()
-        sql: str = f"SELECT ps.id, ps.nombre, tp.typo, ps.precio, ps.gramaje, ps.cantidad_contable, ps.codigo_barras FROM {Productos.__Tabla_productos} ps INNER JOIN typo_productos tp on ps.typo = tp.id"
+        sql: str = f"SELECT id, nombre, typo, precio, gramaje, cantidad_contable, codigo_barras FROM {Productos.__Tabla_productos}"
         cursor.execute(sql)
         result = cursor.fetchall()
         cursor.close()
