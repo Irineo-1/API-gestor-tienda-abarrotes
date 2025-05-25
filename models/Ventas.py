@@ -1,6 +1,9 @@
 from .conexion import getConexion
 from baseModels.IVenta import IVenta
 from models.Typos import Typos
+from models.Productos import Productos
+from dominio.entidades.Producto import Producto
+from dominio.servicios.procesar_venta import procesar_venta
 import uuid
 
 class Ventas:
@@ -29,28 +32,43 @@ class Ventas:
 		cnn = getConexion()
 		cursor = cnn.cursor()
 
-		# crear un objeto de tipo producto que se inicialice con la infor del producto
-		# dentro de este hacer las reglas para la venta
-
 		venta_dict = venta.dict()
 
+		valores_actualizar_producto = []
+		valores_insertar_venta = []
+
+		try:
+
+			for producto_vendido in venta_dict["productos"]:
+				
+				informacion_producto = Productos.getProducto(producto_vendido["id"])
+				producto_entidad = Producto(informacion_producto["id"], informacion_producto["nombre"], informacion_producto["cantidad_contable"])
+
+				producto_procesado = procesar_venta(producto_entidad, producto_vendido["cantidad"])
+
+				valores_actualizar_producto.append((
+					producto_procesado.total_stock,
+					producto_procesado.id
+				))
+
+				valores_insertar_venta.append((
+					producto_vendido["nombre"], 
+					producto_vendido["cantidad"], 
+					producto_vendido["typo"], 
+					producto_vendido["gramos"], 
+					producto_vendido["cantidad"] * producto_vendido["precio"]
+				))
+
+		except:
+			return "stock insuficiente"
+		
 		id_codigo_venta = Ventas.__registrar_codigo_venta(venta_dict["pago"])
 
-		sql: str = f"INSERT INTO {Ventas.__Tabla_ventas}(codigo_venta, nombre, cantidad, typo, gramaje, precio_acumulado) values (?,?,?,?,?,?)"
-		val = []
+		sql: str = f"INSERT INTO {Ventas.__Tabla_ventas}(codigo_venta, nombre, cantidad, typo, gramaje, precio_acumulado) values ('{id_codigo_venta}',?,?,?,?,?)"
 
-		for producto in venta_dict["productos"]:
-			val.append((
-				id_codigo_venta, 
-				producto["nombre"], 
-				producto["cantidad"], 
-				producto["typo"], 
-				producto["gramos"], 
-				producto["cantidad"] * producto["precio"]
-			))
+		Productos.updateStockProducto(valores_actualizar_producto)
 
-
-		cursor.executemany(sql, val)
+		cursor.executemany(sql, valores_insertar_venta)
 		cnn.commit()
 		cursor.close()
 		cnn.close()
@@ -83,4 +101,5 @@ class Ventas:
 		res = cursor.fetchall()
 		cursor.close()
 		cnn.close()
-		return res
+		result = [dict(row) for row in res]
+		return result

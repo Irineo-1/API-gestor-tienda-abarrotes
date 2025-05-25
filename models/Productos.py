@@ -8,7 +8,7 @@ class Productos:
     def getProductos():
         cnn = getConexion()
         cursor = cnn.cursor()
-        sql: str = f"SELECT id, nombre, typo, precio, gramaje, cantidad_contable, codigo_barras FROM {Productos.__Tabla_productos}"
+        sql: str = f"SELECT id, nombre, typo, precio, gramaje, cantidad_contable, codigo_barras FROM {Productos.__Tabla_productos} WHERE cantidad_contable > 0"
         cursor.execute(sql)
         result = cursor.fetchall()
         cursor.close()
@@ -56,6 +56,17 @@ class Productos:
         sql: str = f"UPDATE {Productos.__Tabla_productos} SET nombre = ?, precio = ?, gramaje = ?, cantidad_contable = ? WHERE id = ?"
         val = (producto.nombre, producto.precio, producto.gramaje, producto.cantidad_contable, producto.id)
         cursor.execute(sql, val)
+        cnn.commit()
+        cursor.close()
+        cnn.close()
+
+    def updateStockProducto(productosVendidos: list):
+        cnn = getConexion()
+        cursor = cnn.cursor()
+
+        sql: str = f"UPDATE {Productos.__Tabla_productos} SET cantidad_contable = ? WHERE id = ?"
+        
+        cursor.executemany(sql, productosVendidos)
         cnn.commit()
         cursor.close()
         cnn.close()
