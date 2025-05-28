@@ -8,7 +8,7 @@ class Productos:
     def getProductos():
         cnn = getConexion()
         cursor = cnn.cursor()
-        sql: str = f"SELECT id, nombre, typo, precio, gramaje, cantidad_contable, codigo_barras FROM {Productos.__Tabla_productos} WHERE cantidad_contable > 0"
+        sql: str = f"SELECT id, nombre, typo, precio, gramaje, cantidad_contable, codigo_barras FROM {Productos.__Tabla_productos} WHERE cantidad_contable > 0 OR gramaje > 0"
         cursor.execute(sql)
         result = cursor.fetchall()
         cursor.close()
