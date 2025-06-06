@@ -34,7 +34,8 @@ class Ventas:
 
 		venta_dict = venta.dict()
 
-		valores_actualizar_producto = []
+		valores_actualizar_producto_contable = []
+		valores_actualizar_producto_gramaje = []
 		valores_insertar_venta = []
 
 		try:
@@ -42,31 +43,53 @@ class Ventas:
 			for producto_vendido in venta_dict["productos"]:
 				
 				informacion_producto = Productos.getProducto(producto_vendido["id"])
-				producto_entidad = Producto(informacion_producto["id"], informacion_producto["nombre"], informacion_producto["cantidad_contable"])
 
-				producto_procesado = procesar_venta(producto_entidad, producto_vendido["cantidad"])
+				stock = 0
+				cantidad_vendida = 0
+				precio_acumulado = 0
 
-				valores_actualizar_producto.append((
-					producto_procesado.total_stock,
-					producto_procesado.id
-				))
+				if producto_vendido["typo"] == 1:
+					stock = informacion_producto["cantidad_contable"]
+					cantidad_vendida = producto_vendido["cantidad"]
+					producto_vendido["gramos"] = 0
+					precio_acumulado = producto_vendido["cantidad"] * producto_vendido["precio"]
+				else:
+					stock = informacion_producto["gramaje"]
+					cantidad_vendida = producto_vendido["gramos"]
+					producto_vendido["cantidad"] = 0
+					precio_acumulado = (producto_vendido["gramos"] * producto_vendido["precio"]) / 1000
+
+				producto_entidad = Producto(informacion_producto["id"], informacion_producto["nombre"], stock)
+				producto_procesado = procesar_venta(producto_entidad, cantidad_vendida)
+
+				if producto_vendido["typo"] == 1:
+					valores_actualizar_producto_contable.append((
+						producto_procesado.total_stock,
+						producto_procesado.id
+					))
+				elif producto_vendido["typo"] == 2:
+					valores_actualizar_producto_gramaje.append((
+						producto_procesado.total_stock,
+						producto_procesado.id
+					))
 
 				valores_insertar_venta.append((
 					producto_vendido["nombre"], 
 					producto_vendido["cantidad"], 
 					producto_vendido["typo"], 
 					producto_vendido["gramos"], 
-					producto_vendido["cantidad"] * producto_vendido["precio"]
+					precio_acumulado
 				))
 
-		except:
-			return "stock insuficiente"
+		except ValueError as e:
+			return str(e)
 		
 		id_codigo_venta = Ventas.__registrar_codigo_venta(venta_dict["pago"])
 
 		sql: str = f"INSERT INTO {Ventas.__Tabla_ventas}(codigo_venta, nombre, cantidad, typo, gramaje, precio_acumulado) values ('{id_codigo_venta}',?,?,?,?,?)"
 
-		Productos.updateStockProducto(valores_actualizar_producto)
+		Productos.updateStockProductoContable(valores_actualizar_producto_contable)
+		Productos.updateStockProductoGramaje(valores_actualizar_producto_gramaje)
 
 		cursor.executemany(sql, valores_insertar_venta)
 		cnn.commit()

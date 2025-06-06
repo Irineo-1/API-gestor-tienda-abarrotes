@@ -60,13 +60,24 @@ class Productos:
         cursor.close()
         cnn.close()
 
-    def updateStockProducto(productosVendidos: list):
+    def updateStockProductoContable(productos_vendidos: list):
         cnn = getConexion()
         cursor = cnn.cursor()
 
         sql: str = f"UPDATE {Productos.__Tabla_productos} SET cantidad_contable = ? WHERE id = ?"
         
-        cursor.executemany(sql, productosVendidos)
+        cursor.executemany(sql, productos_vendidos)
+        cnn.commit()
+        cursor.close()
+        cnn.close()
+
+    def updateStockProductoGramaje(productos_vendidos: list):
+        cnn = getConexion()
+        cursor = cnn.cursor()
+
+        sql: str = f"UPDATE {Productos.__Tabla_productos} SET gramaje = ? WHERE id = ?"
+        
+        cursor.executemany(sql, productos_vendidos)
         cnn.commit()
         cursor.close()
         cnn.close()

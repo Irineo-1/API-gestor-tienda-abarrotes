@@ -12,7 +12,7 @@ def get_ventas(date: str, usuario: dict = Depends(verificar_token)):
 
 @router.post("/")
 async def add_venta(request: IVenta, usuario: dict = Depends(verificar_token)):
-    response = Ventas.addVenta(request)
-    if response == "stock insuficiente":
-        return Response(status_code=304)
-    return JSONResponse(status_code=200, content={"response": response})
+    error = Ventas.addVenta(request)
+    if error:
+        return JSONResponse(status_code=406, content={"error": error})
+    return Response(status_code=200)
