@@ -4,6 +4,7 @@ from models.Typos import Typos
 from models.Productos import Productos
 from dominio.entidades.Producto import Producto
 from dominio.servicios.procesar_venta import procesar_venta
+from dominio.constantes.tipos_productos import CONTABLE, GRAMAJE, GENERICO
 import uuid
 
 class Ventas:
@@ -42,13 +43,28 @@ class Ventas:
 
 			for producto_vendido in venta_dict["productos"]:
 				
+				if producto_vendido["typo"] == GENERICO:
+					
+					valores_insertar_venta.append((
+						producto_vendido["nombre"], 
+						producto_vendido["cantidad"], 
+						producto_vendido["typo"], 
+						producto_vendido["gramos"], 
+						producto_vendido["cantidad"] * producto_vendido["precio"]
+					))
+
+					continue
+
+
 				informacion_producto = Productos.getProducto(producto_vendido["id"])
 
 				stock = 0
 				cantidad_vendida = 0
 				precio_acumulado = 0
 
-				if producto_vendido["typo"] == 1:
+				# Dependiendo del tipo del producto hace un anjuste en el precio y stock del producto
+
+				if producto_vendido["typo"] == CONTABLE:
 					stock = informacion_producto["cantidad_contable"]
 					cantidad_vendida = producto_vendido["cantidad"]
 					producto_vendido["gramos"] = 0
@@ -62,12 +78,12 @@ class Ventas:
 				producto_entidad = Producto(informacion_producto["id"], informacion_producto["nombre"], stock)
 				producto_procesado = procesar_venta(producto_entidad, cantidad_vendida)
 
-				if producto_vendido["typo"] == 1:
+				if producto_vendido["typo"] == CONTABLE:
 					valores_actualizar_producto_contable.append((
 						producto_procesado.total_stock,
 						producto_procesado.id
 					))
-				elif producto_vendido["typo"] == 2:
+				else:
 					valores_actualizar_producto_gramaje.append((
 						producto_procesado.total_stock,
 						producto_procesado.id
