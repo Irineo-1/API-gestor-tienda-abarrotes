@@ -15,7 +15,7 @@ class Usuarios:
 		cnn = getConexion()
 		cursor = cnn.cursor()
 		sql: str = f"""
-			SELECT user.id, user.usuario, typouser.typo FROM {Usuarios.__Tabla_usuarios} user 
+			SELECT user.id, user.usuario, typouser.typo as typo_valor, typouser.id as typo_identificador FROM {Usuarios.__Tabla_usuarios} user 
 			INNER JOIN {Usuarios.__Tabla_typo_usuarios} typouser 
 			on typouser.id = user.typo
 		"""
@@ -33,7 +33,7 @@ class Usuarios:
 		# tratamiento para la contraneña
 		encode_password = hash_password(request.password)
 
-		val = (request.usuario, request.typo, encode_password)
+		val = (request.usuario, request.typo_identificador, encode_password)
 
 		cursor.execute(sql, val)
 		cnn.commit()

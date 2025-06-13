@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Response
 from baseModels.Usuario import Usuario
 from models.Usuarios import Usuarios
 from models.Typos import Typos
@@ -29,9 +29,9 @@ def addTrabajador(request: Usuario, usuario: dict = Depends(verificar_token)):
 @router.put("/")
 def updateTrabajador(request: Usuario, usuario: dict = Depends(verificar_token)):
 	id = Usuarios.UpdateTrabajador(request)
-	return {"status": "OK"}
+	return Response(status_code=204)
 
 @router.delete("/{id}")
 def deleteTrabajador(id: int, usuario: dict = Depends(verificar_token)):
 	id = Usuarios.DeleteTrabajador(id)
-	return {"status": "OK"}
+	return Response(status_code=204)

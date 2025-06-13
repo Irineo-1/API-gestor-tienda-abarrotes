@@ -78,6 +78,7 @@ cursor.executescript('''
   INSERT INTO typo_productos (id, typo) VALUES
   (1, 'contable'),
   (2, 'gramaje');
+  (3, 'generico');
 
   CREATE TABLE typo_usuarios (
     id INTEGER PRIMARY KEY,
@@ -96,7 +97,7 @@ cursor.executescript('''
   );
 
   INSERT INTO usuarios (id, usuario, typo, password) VALUES
-  (1, 'Iniciador', 2, '');
+  (1, 'INICIADOR', 2, '');
 
   CREATE TABLE ventas (
     id INTEGER PRIMARY KEY,

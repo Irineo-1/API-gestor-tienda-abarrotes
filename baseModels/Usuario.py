@@ -10,5 +10,6 @@ from pydantic import BaseModel
 class Usuario(BaseModel):
 	id: Optional[int] = None
 	usuario: str
-	typo: Optional[int] = None
+	typo_valor: Optional[str] = None
+	typo_identificador: Optional[int] = None
 	password: Optional[str] = None
