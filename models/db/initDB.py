@@ -91,13 +91,13 @@ cursor.executescript('''
 
   CREATE TABLE usuarios (
     id INTEGER PRIMARY KEY,
-    usuario TEXT NOT NULL,
+    nombre TEXT NOT NULL,
     typo INTEGER NOT NULL,
     password TEXT NOT NULL
   );
 
-  INSERT INTO usuarios (id, usuario, typo, password) VALUES
-  (1, 'INICIADOR', 2, '');
+  INSERT INTO usuarios (id, nombre, typo, password) VALUES
+  (1, 'INICIADOR', 2, '$2b$12$usvJCTwCJEsM2L0XEIkGluQr4yLvxVapjQx6beYiO569gFUZYlcfO');
 
   CREATE TABLE ventas (
     id INTEGER PRIMARY KEY,
